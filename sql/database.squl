@@ -1,0 +1,44 @@
+-- Attivazione vincoli di chiave esterna
+PRAGMA foreign_keys = ON;
+
+-- 1. Creazione della tabella Categorie
+CREATE TABLE categorie (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL UNIQUE
+);
+
+-- 2. Creazione della tabella Spese
+CREATE TABLE spese (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    data TEXT NOT NULL,
+    importo REAL NOT NULL CHECK (importo > 0),
+    categoria_id INTEGER NOT NULL,
+    descrizione TEXT,
+    FOREIGN KEY (categoria_id) REFERENCES categorie(id)
+);
+
+-- 3. Creazione della tabella Budget Mensile
+CREATE TABLE budget (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    mese TEXT NOT NULL,
+    categoria_id INTEGER NOT NULL,
+    limite REAL NOT NULL CHECK (limite > 0),
+    UNIQUE (mese, categoria_id),
+    FOREIGN KEY (categoria_id) REFERENCES categorie(id)
+);
+
+-- Inserimento dati di esempio: Categorie
+INSERT INTO categorie (nome) VALUES ('Alimentari');
+INSERT INTO categorie (nome) VALUES ('Trasporti');
+INSERT INTO categorie (nome) VALUES ('Tempo Libero');
+
+-- Inserimento dati di esempio: Budget Mensile
+INSERT INTO budget (mese, categoria_id, limite) VALUES ('2025-01', 1, 300.00);
+INSERT INTO budget (mese, categoria_id, limite) VALUES ('2025-01', 2, 150.00);
+
+-- Inserimento dati di esempio: Spese
+INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-10', 120.50, 1, 'Spesa settimanale supermercato');
+INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-15', 25.00, 1, 'Pranzo fuori');
+INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-20', 200.00, 1, 'Spesa alimentare grande');
+INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-12', 60.00, 2, 'Abbonamento autobus');
+INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-22', 60.00, 2, 'Rifornimento carburante');
