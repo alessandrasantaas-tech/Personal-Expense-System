@@ -1,44 +1,38 @@
--- Attivazione vincoli di chiave esterna
-PRAGMA foreign_keys = ON;
+-- Schema del database per Sistema di Gestione delle Spese Personali e del Budget
 
--- 1. Creazione della tabella Categorie
-CREATE TABLE categorie (
+CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL UNIQUE
+    name TEXT NOT NULL UNIQUE
 );
 
--- 2. Creazione della tabella Spese
-CREATE TABLE spese (
+CREATE TABLE IF NOT EXISTS expenses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    data TEXT NOT NULL,
-    importo REAL NOT NULL CHECK (importo > 0),
-    categoria_id INTEGER NOT NULL,
-    descrizione TEXT,
-    FOREIGN KEY (categoria_id) REFERENCES categorie(id)
+    amount REAL NOT NULL CHECK (amount > 0),
+    category_id INTEGER NOT NULL,
+    date TEXT NOT NULL,
+    description TEXT,
+    FOREIGN KEY (category_id) REFERENCES categories (id)
 );
 
--- 3. Creazione della tabella Budget Mensile
-CREATE TABLE budget (
+CREATE TABLE IF NOT EXISTS budgets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    mese TEXT NOT NULL,
-    categoria_id INTEGER NOT NULL,
-    limite REAL NOT NULL CHECK (limite > 0),
-    UNIQUE (mese, categoria_id),
-    FOREIGN KEY (categoria_id) REFERENCES categorie(id)
+    month TEXT NOT NULL,
+    category_id INTEGER NOT NULL,
+    limit_amount REAL NOT NULL CHECK (limit_amount > 0),
+    UNIQUE (month, category_id),
+    FOREIGN KEY (category_id) REFERENCES categories (id)
 );
 
--- Inserimento dati di esempio: Categorie
-INSERT INTO categorie (nome) VALUES ('Alimentari');
-INSERT INTO categorie (nome) VALUES ('Trasporti');
-INSERT INTO categorie (nome) VALUES ('Tempo Libero');
+-- Inserimento dati di esempio per dimostrare il funzionamento del sistema
+INSERT OR IGNORE INTO categories (name) VALUES ('Alimentari');
+INSERT OR IGNORE INTO categories (name) VALUES ('Trasporti');
+INSERT OR IGNORE INTO categories (name) VALUES ('Svago');
+INSERT OR IGNORE INTO categories (name) VALUES ('Bollette');
 
--- Inserimento dati di esempio: Budget Mensile
-INSERT INTO budget (mese, categoria_id, limite) VALUES ('2025-01', 1, 300.00);
-INSERT INTO budget (mese, categoria_id, limite) VALUES ('2025-01', 2, 150.00);
+INSERT INTO expenses (amount, category_id, date, description) VALUES (45.50, 1, '2025-01-10', 'Spesa settimanale supermercato');
+INSERT INTO expenses (amount, category_id, date, description) VALUES (25.00, 1, '2025-01-15', 'Pranzo');
+INSERT INTO expenses (amount, category_id, date, description) VALUES (35.00, 2, '2025-01-12', 'Abbonamento autobus');
+INSERT INTO expenses (amount, category_id, date, description) VALUES (80.00, 4, '2025-01-20', 'Bolletta luce');
 
--- Inserimento dati di esempio: Spese
-INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-10', 120.50, 1, 'Spesa settimanale supermercato');
-INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-15', 25.00, 1, 'Pranzo fuori');
-INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-20', 200.00, 1, 'Spesa alimentare grande');
-INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-12', 60.00, 2, 'Abbonamento autobus');
-INSERT INTO spese (data, importo, categoria_id, descrizione) VALUES ('2025-01-22', 60.00, 2, 'Rifornimento carburante');
+INSERT OR IGNORE INTO budgets (month, category_id, limit_amount) VALUES ('2025-01', 1, 300.00);
+INSERT OR IGNORE INTO budgets (month, category_id, limit_amount) VALUES ('2025-01', 2, 100.00);
